@@ -1,6 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.service;
 
 import org.springframework.stereotype.Service;
+import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 
 @Service
 public class ChatService {

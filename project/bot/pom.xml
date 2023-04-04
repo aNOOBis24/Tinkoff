@@ -59,8 +59,8 @@
         </dependency>
         <dependency>
             <groupId>org.ifinalframework.annotation</groupId>
-            <artifactId>final-annotation-web</artifactId>
-            <version>1.4.0</version>
+            <artifactId>final-annotation-core</artifactId>
+            <version>1.4.2</version>
         </dependency>
         <dependency>
             <groupId>crate-bind</groupId>
@@ -131,6 +131,22 @@
             <groupId>org.springframework.roo</groupId>
             <artifactId>org.springframework.roo.addon.web.mvc.views</artifactId>
             <version>2.0.0.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>6.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.pengrad</groupId>
+            <artifactId>java-telegram-bot-api</artifactId>
+            <version>6.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>scrapper</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
