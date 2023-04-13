@@ -1,5 +1,5 @@
 package ru.tinkoff.edu.java.bot.dto;
-import ru.tinkoff.edu.java.scrapper.model.Link;
+import ru.tinkoff.edu.java.bot.model.Link;
 
 import java.util.List;
 

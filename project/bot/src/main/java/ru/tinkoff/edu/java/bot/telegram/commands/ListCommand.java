@@ -3,9 +3,9 @@ package ru.tinkoff.edu.java.bot.telegram.commands;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.scrapper.dto.ListLinkResponse;
-import ru.tinkoff.edu.java.scrapper.model.Link;
-import ru.tinkoff.edu.java.scrapper.service.LinkService;
+import ru.tinkoff.edu.java.bot.dto.ListLinkResponse;
+import ru.tinkoff.edu.java.bot.model.Link;
+import ru.tinkoff.edu.java.bot.service.LinkService;
 
 import java.util.List;
 

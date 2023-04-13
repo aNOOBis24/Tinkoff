@@ -1,10 +1,10 @@
 package ru.tinkoff.edu.java.bot.service;
 
 import org.springframework.stereotype.Service;
-import ru.tinkoff.edu.java.scrapper.dto.AddLinkRequest;
-import ru.tinkoff.edu.java.scrapper.dto.RemoveLinkRequest;
-import ru.tinkoff.edu.java.scrapper.model.Link;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
+import ru.tinkoff.edu.java.bot.dto.AddLinkRequest;
+import ru.tinkoff.edu.java.bot.dto.RemoveLinkRequest;
+import ru.tinkoff.edu.java.bot.model.Link;
+import ru.tinkoff.edu.java.bot.repository.ChatRepository;
 
 import java.util.List;
 

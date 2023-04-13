@@ -15,6 +15,10 @@ import ru.tinkoff.edu.java.bot.dto.ListLinkResponse;
 import ru.tinkoff.edu.java.bot.model.Link;
 import ru.tinkoff.edu.java.bot.service.LinkService;
 import ru.tinkoff.edu.java.bot.telegram.commands.ListCommand;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.ParameterResolver;
 
 
 import java.net.URI;
@@ -59,9 +63,9 @@ public class LinkListTest {
         when(mockUpdate.message()).thenReturn(mockMessage);
         when(mockMessage.chat()).thenReturn(mockChat);
         when(mockMessage.chat().id()).thenReturn(id);
-        when(client.getAllLinks(id)).thenReturn(new ListLinkResponse(List.of(
-                new Link(id, URI.create("https://github.com/sanyarnd/tinkoff-java-course-2022/")),
-                new Link(id, URI.create("https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c"))), 2));
+        when(client.getLinks(id)).thenReturn(new ListLinkResponse(List.of(
+                new Link(id, ("https://github.com/sanyarnd/tinkoff-java-course-2022/").toString()),
+                new Link(id, ("https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c").toString())), 2).links());
         ListCommand listCommand = new ListCommand(client);
         SendMessage result = listCommand.handle(mockUpdate);
         String res = """

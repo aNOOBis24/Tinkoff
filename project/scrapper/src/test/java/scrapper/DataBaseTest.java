@@ -1,58 +1,35 @@
-package ru.tinkoff.edu.scrapper.database;
+package scrapper;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.tinkoff.edu.scrapper.utils.IntegrationEnvironment;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+import java.sql.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DatabaseTest extends IntegrationEnvironment {
+public class DatabaseTest extends IntegrationEnvironment{
+
 
     @Test
-    void migrationChatTest() {
-
-        try (Connection connection = POSTGRE_SQL_CONTAINER.createConnection("")) {
-
-            List<String> expectedColumns = List.of("id", "username");
-
-
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM chat");
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-
-            assertThat(resultSet.getMetaData().getColumnCount()).isEqualTo(expectedColumns.size());
-            for (int i = 1; i <= expectedColumns.size(); i++) {
-                assertTrue(expectedColumns.contains(resultSet.getMetaData().getColumnName(i)));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    @DisplayName("Тест для проверки запуска контейнера с PostgreSQL")
+    public void testIfContainerIsRunning() {
+        Assertions.assertTrue(POSTGRES_CONTAINER.isRunning(),"Ошибка запуска контейнера PostgreSQL");
     }
 
     @Test
-    void migrationLinkTest() {
-        try (Connection connection = POSTGRE_SQL_CONTAINER.createConnection("")) {
+    @DisplayName("Тест для проверки успешного применения миграций")
+    void testMigrations() throws SQLException {
+        try (Connection conn = DriverManager.getConnection(IntegrationEnvironment.POSTGRES_CONTAINER.getJdbcUrl(),
+                IntegrationEnvironment.POSTGRES_CONTAINER.getUsername(),
+                IntegrationEnvironment.POSTGRES_CONTAINER.getPassword());
+             Statement statement = conn.createStatement()) {
 
-            List<String> expectedColumns = List.of("id", "url", "updated_at");
-
-
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM link");
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-
-            assertThat(resultSet.getMetaData().getColumnCount()).isEqualTo(expectedColumns.size());
-            for (int i = 1; i <= expectedColumns.size(); i++) {
-                assertTrue(expectedColumns.contains(resultSet.getMetaData().getColumnName(i)));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            ResultSet resultSetUser = statement.executeQuery("SELECT * FROM \"user\"");
+            Assertions.assertFalse(resultSetUser.next(), "Таблица user не создана");
+            ResultSet resultSetLink = statement.executeQuery("SELECT * FROM \"link\"");
+            Assertions.assertFalse(resultSetLink.next(), "Таблица link не создана");
+            ResultSet resultSetUserLink = statement.executeQuery("SELECT * FROM \"user_link\"");
+            Assertions.assertFalse(resultSetUserLink.next(),"Таблица user_link не создана");
         }
     }
-
-}

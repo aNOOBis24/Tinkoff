@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.java.bot.service;
 
 import org.springframework.stereotype.Service;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
+import ru.tinkoff.edu.java.bot.repository.ChatRepository;
 
 @Service
 public class ChatService {

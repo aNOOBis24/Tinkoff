@@ -3,8 +3,8 @@ package ru.tinkoff.edu.java.bot.telegram.commands;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.scrapper.dto.RemoveLinkRequest;
-import ru.tinkoff.edu.java.scrapper.service.LinkService;
+import ru.tinkoff.edu.java.bot.dto.RemoveLinkRequest;
+import ru.tinkoff.edu.java.bot.service.LinkService;
 
 @Component
 public class TrackStopCommand implements Command{
