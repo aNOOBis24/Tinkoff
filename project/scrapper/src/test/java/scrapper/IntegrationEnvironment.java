@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.scrapper.utils;
+package scrapper;
 
 import liquibase.Liquibase;
 import liquibase.database.Database;
