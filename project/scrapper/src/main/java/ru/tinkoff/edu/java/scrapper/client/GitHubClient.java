@@ -7,12 +7,11 @@ import ru.tinkoff.edu.java.scrapper.dto.GitHubResponse;
 public class GitHubClient {
 
 
-    @Value("${gh.baseurl}")
+    @Value("https://github.com/aNOOBis24/NewGame-")
     private String gitHubBaseUrl;
 
     private final WebClient webClient;
 
-    //для использования baseUrl по умолчанию (берётся из properties)
     public GitHubClient() {
         this.webClient = WebClient.create(gitHubBaseUrl);
     }

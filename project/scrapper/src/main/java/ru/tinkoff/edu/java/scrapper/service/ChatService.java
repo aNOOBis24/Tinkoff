@@ -1,23 +1,15 @@
 package ru.tinkoff.edu.java.scrapper.service;
 
-import org.springframework.stereotype.Service;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
+import ru.tinkoff.edu.java.scrapper.model.User;
 
-@Service
-public class ChatService {
+public interface ChatService {
 
-    private final ChatRepository chatRepository;
+    void register(User user);
 
-    public ChatService(ChatRepository chatRepository) {
-        this.chatRepository = chatRepository;
-    }
-
-    public void registerChat(Long id) {
-        chatRepository.save(id);
-    }
+    void unregister(Long chatId);
 
 
-    public void deleteChat(Long id) {
-        chatRepository.deleteByChatId(id);
-    }
+
+
+
 }

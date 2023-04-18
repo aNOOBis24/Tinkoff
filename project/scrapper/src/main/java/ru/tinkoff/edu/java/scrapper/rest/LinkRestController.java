@@ -7,6 +7,7 @@ import ru.tinkoff.edu.java.scrapper.dto.ListLinkResponse;
 import ru.tinkoff.edu.java.scrapper.dto.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
+import ru.tinkoff.edu.java.scrapper.
 
 import java.util.List;
 
@@ -15,10 +16,10 @@ import java.util.List;
 public class LinkRestController {
 
 
-    private final LinkService linkService;
+    private final SubscriptionService subscriptionService;
 
-    public LinkRestController(LinkService linkService) {
-        this.linkService = linkService;
+    public LinkRestController(SubscriptionService subscriptionService) {
+        this. = linkService;
     }
 
     @GetMapping
@@ -36,6 +37,9 @@ public class LinkRestController {
     @DeleteMapping
     public LinkResponse deleteLink(@RequestHeader("Tg-Chat-Id") Long chatId, @RequestBody RemoveLinkRequest request) {
         Link link = linkService.deleteLink(chatId, request);
+        if (link == null) {
+            throw new LinkNotFoundException("Ссылка с таким")
+        }
         return new LinkResponse(link.getId(), link.getUrl());
     }
 

@@ -7,23 +7,22 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public abstract class AbstractLink {
+        protected Parser nextParser;
 
-    AbstractLink nextParser;
+        public Parser(Parser nextParser) {
+            this.nextParser = nextParser;
+        }
 
-    public AbstractLink(AbstractLink nextParser) {
-        this.nextParser = nextParser;
-    }
+        abstract ParsedObject parseLinkImpl(URL url);
 
-    public abstract ParseResult parseResult(String url);
-
-    public final URL tweakUrl(String urlString) {
-        URL url;
-        try{
-            url = new URL(urlString);
-        } catch (MalformedURLException e){
-            System.out.println("Incorrect URL");
+        public ParsedObject parseLink(URL url) {
+            ParsedObject res = parseLinkImpl(url);
+            if (res != null) {
+                return res;
+            }
+            if (nextParser != null) {
+                return nextParser.parseLink(url);
+            }
             return null;
         }
-        return url;
     }
-}

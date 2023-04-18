@@ -9,7 +9,7 @@ import ru.tinkoff.edu.java.scrapper.exception.BadResponseFromApiException;
 
 public class StackOverflowClient {
 
-    @Value("${so.baseurl}")
+
     private String stackOverflowBaseUrl;
 
     private final WebClient webClient;
