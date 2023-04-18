@@ -1,7 +1,7 @@
-org/example/results/StackResult.class
-org/example/results/ParseResult.class
-org/example/parsers/GitLink.class
-org/example/parsers/AbstractLink.class
-org/example/results/GitResult.class
-org/example/parsers/StackLink.class
-org/example/LinkParser.class
+org\example\parsers\GitLink.class
+org\example\results\GitResult.class
+org\example\parsers\StackLink.class
+org\example\results\StackResult.class
+org\example\LinkParser.class
+org\example\results\ParseResult.class
+org\example\parsers\AbstractLink.class
