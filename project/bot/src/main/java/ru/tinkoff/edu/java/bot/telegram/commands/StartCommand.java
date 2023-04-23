@@ -1,17 +1,33 @@
 package ru.tinkoff.edu.java.bot.telegram.commands;
 
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
+import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.bot.service.ChatService;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+import ru.tinkoff.edu.java.bot.client.ScrapperClient;
+import ru.tinkoff.edu.java.bot.exceptions.ScrapperClientException;
+import ru.tinkoff.edu.java.bot.dto.AddUserDto;
+import ru.tinkoff.edu.java.bot.dto.Link;
+import ru.tinkoff.edu.java.bot.dto.ListLinkResponse;
+import ru.tinkoff.edu.java.bot.dto.AddUserDto;
 
 @Component
-public class StartCommand implements Command{
-    private ChatService chatService;
+public class StartCommand implements Command {
 
-    public StartCommand(ChatService chatService) {
-        this.chatService = chatService;
+    private final ScrapperClient scrapperClient;
+
+    public StartCommand(ScrapperClient scrapperClient) {
+        this.scrapperClient = scrapperClient;
     }
+
+
+    @Value("${tg.bot.token}")
+    private String token;
+
 
     @Override
     public String command() {
@@ -19,13 +35,22 @@ public class StartCommand implements Command{
     }
 
     @Override
-    public String script() {
-        return "Старт бота";
+    public String description() {
+        return "зарегистрировать пользователя";
     }
 
     @Override
-    public SendMessage handle(Update update) {
-        chatService.registerChat(update.message().chat().id());
-        return new SendMessage(update.message().chat().id(), "Введите команду /help");
+    public String handle(Update update) {
+        long chatId = update.message().chat().id();
+        try {
+            AddUserDto userAddDto = new AddUserDto(update.message().chat().username(), update.message().chat().firstName(), update.message().chat().lastName());
+            scrapperClient.registerChat(chatId, userAddDto);
+            return "Привет! Рад познакомиться, " + update.message().chat().firstName();
+        } catch (ScrapperClientException e) {
+
+            return e.getMessage();
+        }
+
+
     }
 }

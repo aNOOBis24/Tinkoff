@@ -1,17 +1,22 @@
 package ru.tinkoff.edu.java.bot.telegram.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Component;
+import org.example.LinkParser;
+import ru.tinkoff.edu.java.bot.client.ScrapperClient;
+import ru.tinkoff.edu.java.bot.exceptions.ScrapperClientException;
 import ru.tinkoff.edu.java.bot.dto.AddLinkRequest;
-import ru.tinkoff.edu.java.bot.service.LinkService;
 
 @Component
-public class TrackCommand implements Command{
-    private LinkService linkService;
+public class TrackCommand implements Command {
 
-    public TrackCommand(LinkService linkService) {
-        this.linkService = linkService;
+    private final ScrapperClient scrapperClient;
+
+    private final LinkParser parser;
+
+    public TrackCommand(ScrapperClient scrapperClient, LinkParser parser) {
+        this.scrapperClient = scrapperClient;
+        this.parser = parser;
     }
 
     @Override
@@ -20,15 +25,22 @@ public class TrackCommand implements Command{
     }
 
     @Override
-    public String script() {
-        return "Начать отслеживать ссылку.";
+    public String description() {
+        return "начать отслеживание ссылки";
     }
 
     @Override
-    public SendMessage handle(Update update) {
-        String message = update.message().text();
-        if (message.charAt(0) == '/') return new SendMessage(update.message().chat().id(), "Введите ссылку");
-        linkService.addLink(update.message().chat().id(), new AddLinkRequest(update.message().text()));
-        return new SendMessage(update.message().chat().id(), "Ссылка отслеживается");
+    public String handle(Update update) {
+        long chatId = update.message().chat().id();
+        String msg;
+        try {
+            if (parser.parseUrl(update.message().text()) != null){
+                scrapperClient.addLink(chatId, new AddLinkRequest(update.message().text()));
+                msg = "Ссылка успешно добавлена";
+            } else msg = "Некорректная ссылка";
+            return msg;
+        } catch (ScrapperClientException e) {
+            return e.getMessage();
+        }
     }
 }

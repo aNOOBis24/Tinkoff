@@ -5,8 +5,8 @@ import org.example.results.StackResult;
 
 import java.net.URL;
 
-public class StackLink extends AbstractLink {
-    public StackLink(AbstractLink nextParser) {
+public class StackLink extends AbstractLinkParser {
+    public StackLink(AbstractLinkParser nextParser) {
         super(nextParser);
     }
 

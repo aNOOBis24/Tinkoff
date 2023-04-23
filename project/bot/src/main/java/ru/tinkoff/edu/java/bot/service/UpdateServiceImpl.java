@@ -1,10 +1,11 @@
 package ru.tinkoff.edu.java.bot.service;
 
 
+import com.pengrad.telegrambot.TelegramBot;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.edu.java.bot.dto.LinkUpdate;
-import ru.tinkoff.edu.java.bot.telegram.Bot;
+import ru.tinkoff.edu.java.bot.telegram.bot.Bot;
 
 @Service
 @Slf4j

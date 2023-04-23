@@ -1,17 +1,24 @@
 package ru.tinkoff.edu.java.bot.telegram.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Component;
+import org.example.LinkParser;
+import ru.tinkoff.edu.java.bot.client.ScrapperClient;
+import ru.tinkoff.edu.java.bot.exceptions.ScrapperClientException;
 import ru.tinkoff.edu.java.bot.dto.RemoveLinkRequest;
-import ru.tinkoff.edu.java.bot.service.LinkService;
 
 @Component
 public class TrackStopCommand implements Command{
-    private final LinkService linkService;
 
-    public TrackStopCommand(LinkService linkService) {
-        this.linkService = linkService;
+    private ScrapperClient scrapperClient;
+
+    private LinkParser parser;
+
+
+
+    public TrackStopCommand(ScrapperClient scrapperClient, LinkParser parser) {
+        this.scrapperClient = scrapperClient;
+        this.parser = parser;
     }
 
     @Override
@@ -20,15 +27,22 @@ public class TrackStopCommand implements Command{
     }
 
     @Override
-    public String script() {
-        return "Перестать отслеживать ссылку.";
+    public String description() {
+        return "прекратить отслеживание ссылки";
     }
 
     @Override
-    public SendMessage handle(Update update) {
-        String message = update.message().text();
-        if (message.charAt(0) == '/') return new SendMessage(update.message().chat().id(), "Введите ссылку");
-        linkService.deleteLink(update.message().chat().id(), new RemoveLinkRequest(update.message().text()));
-        return new SendMessage(update.message().chat().id(), "Ссылка отслеживается");
+    public String handle(Update update) {
+        long chatId = update.message().chat().id();
+        String msg;
+        try {
+            if (parser.parseUrl(update.message().text()) != null){
+                scrapperClient.deleteLink(chatId, new RemoveLinkRequest(update.message().text()));
+                msg = "Ссылка успешно удалена";
+            } else msg = "Некорректная ссылка";
+            return msg;
+        } catch (ScrapperClientException e) {
+            return e.getMessage();
+        }
     }
 }

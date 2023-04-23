@@ -1,21 +1,20 @@
 package ru.tinkoff.edu.java.bot.telegram.commands;
 
-import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
+import ru.tinkoff.edu.java.bot.dto.BotCommand;
 
 public interface Command {
     String command();
 
-    String script();
+    String description();
 
-    SendMessage handle(Update update);
+    String handle(Update update);
 
     default boolean supports(Update update) {
-        return false;
+        return update.message().text().equals(command());
     }
 
-    default BotCommand ApiCommand() {
-        return new BotCommand(command(), script());
+    default BotCommand toApiCommand() {
+        return new BotCommand(command(), description());
     }
 }

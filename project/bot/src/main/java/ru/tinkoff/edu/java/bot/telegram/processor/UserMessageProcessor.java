@@ -2,12 +2,70 @@ package ru.tinkoff.edu.java.bot.telegram.processor;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import ru.tinkoff.edu.java.bot.telegram.commands.*;
 
-import java.util.List;
-import ru.tinkoff.edu.java.bot.telegram.commands.Command;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
-public interface UserMessageProcessor {
-    List<? extends Command> commands();
 
-    SendMessage process(Update update);
+public class UserMessageProcessor {
+
+//    private final List<Command> commands;
+
+    // Состояние пользователя. Нужно для удобной работы с командами /track и /untrack
+    // TYPING_COMMAND - состояние ввода команды (по-умолчанию)
+    // TYPING_TRACKED - состояние ввода ссылки для добавления
+    // TYPING_UNTRACKED - состояние ввода ссылки для удаления
+    private final Map<Long, UserState> userStateMap;
+
+    private final EnumMap<CommandsEnum, Command> commands;
+
+
+    public UserMessageProcessor(EnumMap<CommandsEnum, Command> commands) {
+        this.commands = commands;
+        userStateMap = new HashMap<>();
+    }
+
+    public String process(Update update) {
+        Command command;
+
+
+        userStateMap.putIfAbsent(update.message().chat().id(), UserState.TYPING_COMMAND);
+        switch (userStateMap.get(update.message().chat().id())) {
+            case TYPING_TRACKED -> {
+                userStateMap.put(update.message().chat().id(), UserState.TYPING_COMMAND);
+                return new SendMessage(commands.get(CommandsEnum.valueOfLabel("/track")).handle(update), "").toString();
+            }
+            case TYPING_UNTRACKED -> {
+                userStateMap.put(update.message().chat().id(), UserState.TYPING_COMMAND);
+                return new SendMessage(commands.get(CommandsEnum.valueOfLabel("/untrack")).handle(update), "").toString();
+            }
+            case TYPING_COMMAND -> {
+                userStateMap.put(update.message().chat().id(), UserState.TYPING_COMMAND);
+                command = commands.get(CommandsEnum.valueOfLabel(update.message().text()));
+                if (command == null)
+                    return "Неизвестная команда. Нажмите 'Меню' чтобы посмотреть список доступных команд";
+                if (command instanceof TrackCommand) {
+                    userStateMap.put(update.message().chat().id(), UserState.TYPING_TRACKED);
+                    return "Отправьте ссылку, которую хотите начать отслеживать";
+                }
+                if (command instanceof TrackStopCommand) {
+                    userStateMap.put(update.message().chat().id(), UserState.TYPING_UNTRACKED);
+                    return "Отправьте ссылку, которую хотите перестать отслеживать";
+                }
+                if (command instanceof HelpCommand){
+                    StringBuilder text = new StringBuilder();
+                    for (Command c : commands.values()) {
+                        text.append(c.command()).append(" - ").append(c.description()).append("\n");
+                    }
+                    return text.toString();
+                }
+                return command.handle(update).toString();
+            }
+        }
+        return "Невозможная ситуация";
+    }
+
+
 }

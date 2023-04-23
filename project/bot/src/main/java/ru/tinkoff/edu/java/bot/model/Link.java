@@ -19,4 +19,5 @@ public class Link {
     public Long getId() {
         return id;
     }
+
 }

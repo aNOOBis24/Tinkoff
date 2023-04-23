@@ -1,22 +1,20 @@
 package ru.tinkoff.edu.java.bot.telegram.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Component;
+import ru.tinkoff.edu.java.bot.client.ScrapperClient;
+import ru.tinkoff.edu.java.bot.exceptions.ScrapperClientException;
 import ru.tinkoff.edu.java.bot.dto.ListLinkResponse;
 import ru.tinkoff.edu.java.bot.model.Link;
-import ru.tinkoff.edu.java.bot.service.LinkService;
-
-import java.util.List;
 
 @Component
-public class ListCommand implements Command{
-    private final LinkService linkService;
+public class ListCommand implements Command {
 
-    public ListCommand(LinkService linkService) {
-        this.linkService = linkService;
+    private final ScrapperClient scrapperClient;
+
+    public ListCommand(ScrapperClient scrapperClient) {
+        this.scrapperClient = scrapperClient;
     }
-
 
     @Override
     public String command() {
@@ -24,21 +22,27 @@ public class ListCommand implements Command{
     }
 
     @Override
-    public String script() {
-        return "Cписок отслеживаемых ссылок";
+    public String description() {
+        return "показать список отслеживаемых ссылок";
     }
 
-
-
     @Override
-    public SendMessage handle(Update update) {
-        List<Link> listLinkResponse = linkService.getLinks(update.message().chat().id());
-        if (listLinkResponse == null || listLinkResponse.size() == 0) return new SendMessage(update.message().chat().id(), "Нет отслеживаемых ссылок");
-        var answer = new StringBuilder();
-        answer.append("Список отслеживаемых ссылок:\n");
-        for (int i = 0; i < listLinkResponse.size(); i++) {
-            answer.append(listLinkResponse.get(i).getUrl()).append("\n");
+    public String handle(Update update) {
+        long chatId = update.message().chat().id();
+        try {
+            ListLinkResponse response = scrapperClient.getLinks(chatId);
+            StringBuilder msg = new StringBuilder();
+            if (response.size() == 0)
+                msg.append("Список отслеживаемых ссылок пуст!");
+            else {
+                msg.append("Ссылок отслеживается - ").append(response.size()).append("\n\n");
+                for (Link link : response.links()) {
+                    msg.append(link.getUrl()).append("\n\n");
+                }
+            }
+            return msg.toString();
+        } catch (ScrapperClientException e){
+            return e.getMessage();
         }
-        return new SendMessage(update.message().chat().id(), answer.toString());
     }
 }

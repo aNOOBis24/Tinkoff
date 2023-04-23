@@ -8,8 +8,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 
-public class GitLink extends AbstractLink {
-    public GitLink(AbstractLink nextParser) {
+public class GitLink extends AbstractLinkParser {
+    public GitLink(AbstractLinkParser nextParser) {
         super(nextParser);
     }
 
