@@ -1,23 +1,22 @@
 package ru.tinkoff.edu.java.scrapper.configuration.database.acess;
 
 
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 import parser.LinkParser;
 import ru.tinkoff.edu.java.scrapper.client.BotClient;
 import ru.tinkoff.edu.java.scrapper.client.GitHubClient;
 import ru.tinkoff.edu.java.scrapper.client.StackOverflowClient;
-import ru.tinkoff.edu.java.scrapper.mapper.LinkRowMapper;
-import ru.tinkoff.edu.java.scrapper.mapper.SubscriptionRowMapper;
-import ru.tinkoff.edu.java.scrapper.mapper.UserRowMapper;
-import ru.tinkoff.edu.java.scrapper.repository.jdbc.LinkJdbcTemplateRepository;
-import ru.tinkoff.edu.java.scrapper.repository.jdbc.SubscriptionJdbcTemplateRepository;
-import ru.tinkoff.edu.java.scrapper.repository.jdbc.UserJdbcTemplateRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jdbcAndJooqContract.LinkRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jdbcAndJooqContract.SubscriptionRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jdbcAndJooqContract.UserRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jooq.LinkJooqRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jooq.SubscriptionJooqRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jooq.UserJooqRepository;
+import ru.tinkoff.edu.java.scrapper.service.UpdateNotificationService;
 import ru.tinkoff.edu.java.scrapper.service.contract.LinkUpdateService;
 import ru.tinkoff.edu.java.scrapper.service.contract.SubscriptionService;
 import ru.tinkoff.edu.java.scrapper.service.contract.TgChatService;
@@ -25,38 +24,26 @@ import ru.tinkoff.edu.java.scrapper.service.jdbcAndJooq.impl.LinkUpdateServiceIm
 import ru.tinkoff.edu.java.scrapper.service.jdbcAndJooq.impl.SubscriptionServiceImpl;
 import ru.tinkoff.edu.java.scrapper.service.jdbcAndJooq.impl.TgChatServiceImpl;
 
+
 @Configuration
-@ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jdbc")
-public class JdbcAccessConfiguration {
+@ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jooq")
+public class JooqAccessConfiguration {
+
 
     @Bean
-    public LinkRowMapper linkRowMapper() {
-        return new LinkRowMapper();
+    public LinkRepository linkRepository(DSLContext dslContext){
+        return new LinkJooqRepository(dslContext);
     }
 
     @Bean
-    public SubscriptionRowMapper subscriptionRowMapper() {
-        return new SubscriptionRowMapper();
+    public SubscriptionRepository subscriptionRepository(DSLContext dslContext){
+        return new SubscriptionJooqRepository(dslContext);
     }
 
-    @Bean
-    public UserRowMapper userRowMapper() {
-        return new UserRowMapper();
-    }
 
     @Bean
-    public LinkRepository linkRepository(JdbcTemplate jdbcTemplate, LinkRowMapper linkRowMapper) {
-        return new LinkJdbcTemplateRepository(jdbcTemplate, linkRowMapper);
-    }
-
-    @Bean
-    public SubscriptionRepository subscriptionRepository(JdbcTemplate jdbcTemplate, SubscriptionRowMapper subscriptionRowMapper) {
-        return new SubscriptionJdbcTemplateRepository(jdbcTemplate, subscriptionRowMapper, linkRowMapper());
-    }
-
-    @Bean
-    public UserRepository userRepository(JdbcTemplate jdbcTemplate, UserRowMapper userRowMapper) {
-        return new UserJdbcTemplateRepository(jdbcTemplate, userRowMapper);
+    public UserRepository userRepository(DSLContext dslContext){
+        return new UserJooqRepository(dslContext);
     }
 
     @Bean
@@ -66,7 +53,7 @@ public class JdbcAccessConfiguration {
             LinkParser linkParser,
             GitHubClient gitHubClient,
             StackOverflowClient stackOverflowClient,
-            BotClient botClient
+            UpdateNotificationService notificationService
     ) {
         return new LinkUpdateServiceImpl(
                 linkRepository,
@@ -74,7 +61,8 @@ public class JdbcAccessConfiguration {
                 linkParser,
                 gitHubClient,
                 stackOverflowClient,
-                botClient);
+                notificationService);
+
     }
 
     @Bean
@@ -96,4 +84,5 @@ public class JdbcAccessConfiguration {
                 userRepository,
                 subscriptionRepository);
     }
+
 }

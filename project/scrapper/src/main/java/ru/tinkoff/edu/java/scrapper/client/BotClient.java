@@ -7,10 +7,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.tinkoff.edu.java.scrapper.dto.LinkUpdate;
 import ru.tinkoff.edu.java.scrapper.exception.BotClientException;
+import ru.tinkoff.edu.java.scrapper.service.UpdateNotificationService;
 
 @Slf4j
-public class BotClient {
+public class BotClient implements UpdateNotificationService {
 
+    @Value("${bot.baseurl}")
     private String botBaseUrl;
 
     private final WebClient webClient;
@@ -27,7 +29,7 @@ public class BotClient {
         log.info("Sending update request to Bot");
         webClient.post().uri("/updates").bodyValue(request).exchangeToMono(r -> {
             if (r.statusCode().equals(HttpStatus.BAD_REQUEST)) {
-                throw new BotClientException("No registred chat with that ID");
+                throw new BotClientException("Чат с таким ID не зарегистрирован");
             }
             return Mono.empty();
         }).block();
