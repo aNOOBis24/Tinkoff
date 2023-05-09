@@ -1,31 +1,92 @@
-package ru.tinkoff.edu.java.scrapper.model.jpa;
+package ru.tinkoff.edu.java.scrapper.repository.jdbc;
 
-import jakarta.persistence.*;
-import lombok.Data;
-
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
+import ru.tinkoff.edu.java.scrapper.mapper.LinkRowMapper;
+import ru.tinkoff.edu.java.scrapper.model.commonDto.Link;
+import ru.tinkoff.edu.java.scrapper.repository.jdbcAndJooqContract.LinkRepository;
+import java.sql.Timestamp;
 import java.util.List;
 
-@Entity
-@Table(name = "\"user\"")
-@Data
-public class UserEntity {
+@Slf4j
+public class LinkJdbcTemplateRepository implements LinkRepository {
 
-    @Id
-    @Column(name = "chat_id")
-    private Long chatId;
+    private final JdbcTemplate jdbcTemplate;
 
-    @Column(name = "username", unique = true, nullable = false)
-    private String username;
+    private final LinkRowMapper linkRowMapper;
 
-    @Column(name = "first_name")
-    private String firstName;
+    private final int millisInSecond = 1000;
 
-    @Column(name = "last_name")
-    private String lastName;
+    public LinkJdbcTemplateRepository(JdbcTemplate jdbcTemplate, LinkRowMapper linkRowMapper) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.linkRowMapper = linkRowMapper;
+    }
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_link",
-            joinColumns = @JoinColumn(name = "chat_id"),
-            inverseJoinColumns = @JoinColumn(name = "link_id"))
-    private List<LinkEntity> links;
+    @Override
+    public List<Link> findAll() {
+        log.info("findAll() method invocation in linkRepo");
+        String sql = "select * from link";
+        return jdbcTemplate.query(sql, linkRowMapper);
+    }
+
+    @Override
+    public Link findByUrl(String url) {
+        log.info("findByUrl() method invocation in linkRepo");
+        String sql = "select * from link where link.url = ?";
+        List<Link> link = jdbcTemplate.query(sql, linkRowMapper, url);
+        return link.size() == 0 ? null : link.get(0);
+    }
+
+    @Override
+    public void add(Link link) {
+        log.info("add() method invocation in linkRepo");
+        String sql = "insert into link (url, checked_at) values(?, ?)";
+        jdbcTemplate.update(sql, link.getUrl(), link.getCheckedAt());
+    }
+
+    @Override
+    public void updateCheckDate(Link link) {
+        log.info("updateDate() method invocation in linkRepo");
+        String sql = "update link set checked_at = ? where id = ?";
+        jdbcTemplate.update(sql, link.getCheckedAt(), link.getId());
+    }
+
+    @Override
+    public void remove(Long id) {
+        log.info("remove() method invocation in linkRepo");
+        String sql = "delete from link where link.id = ?";
+        jdbcTemplate.update(sql, id);
+    }
+
+    @Override
+    //поиск ссылок по критерию
+    public List<Link> findOldLinks(Long timeUpdateDelta) {
+        log.info("findOldLinks() method invocation in linkRepo");
+        Timestamp compareDate = new Timestamp(System.currentTimeMillis() - timeUpdateDelta * millisInSecond);
+        String sql = "select * from link where link.checked_at < ? order by link.checked_at desc";
+        return jdbcTemplate.query(sql, linkRowMapper, compareDate);
+    }
+
+    @Override
+    public void updateGhLink(Link link) {
+        log.info("updateGhLink() method invocation in linkJdbcRepo");
+        String sql =
+                "update link set checked_at = ?, gh_forks_count = ?, gh_description = ?, gh_pushed_at = ? where id = ?";
+        jdbcTemplate.update(
+                sql,
+                link.getCheckedAt(),
+                link.getGhForksCount(),
+                link.getGhDescription(),
+                link.getGhPushedAt(),
+                link.getId()
+        );
+    }
+
+    @Override
+    public void updateSoLink(Link link) {
+        log.info("updateSoLastEditDate() method invocation in linkJdbcRepo");
+        String sql = "update link set checked_at = ?, set so_last_edit_date = ?, so_answer_count = ? where id = ?";
+        jdbcTemplate.update(sql, link.getCheckedAt(), link.getSoLastEditDate(), link.getSoAnswerCount(), link.getId());
+    }
+
 }

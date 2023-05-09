@@ -1,12 +1,10 @@
 package ru.tinkoff.edu.java.scrapper.configuration.database.acess;
 
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import parser.LinkParser;
-import ru.tinkoff.edu.java.scrapper.client.BotClient;
 import ru.tinkoff.edu.java.scrapper.client.GitHubClient;
 import ru.tinkoff.edu.java.scrapper.client.StackOverflowClient;
 import ru.tinkoff.edu.java.scrapper.mapper.LinkRowMapper;
@@ -18,6 +16,7 @@ import ru.tinkoff.edu.java.scrapper.repository.jdbc.UserJdbcTemplateRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jdbcAndJooqContract.LinkRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jdbcAndJooqContract.SubscriptionRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jdbcAndJooqContract.UserRepository;
+import ru.tinkoff.edu.java.scrapper.service.UpdateNotificationService;
 import ru.tinkoff.edu.java.scrapper.service.contract.LinkUpdateService;
 import ru.tinkoff.edu.java.scrapper.service.contract.SubscriptionService;
 import ru.tinkoff.edu.java.scrapper.service.contract.TgChatService;
@@ -50,7 +49,10 @@ public class JdbcAccessConfiguration {
     }
 
     @Bean
-    public SubscriptionRepository subscriptionRepository(JdbcTemplate jdbcTemplate, SubscriptionRowMapper subscriptionRowMapper) {
+    public SubscriptionRepository subscriptionRepository(
+            JdbcTemplate jdbcTemplate,
+            SubscriptionRowMapper subscriptionRowMapper
+    ) {
         return new SubscriptionJdbcTemplateRepository(jdbcTemplate, subscriptionRowMapper, linkRowMapper());
     }
 
@@ -66,7 +68,7 @@ public class JdbcAccessConfiguration {
             LinkParser linkParser,
             GitHubClient gitHubClient,
             StackOverflowClient stackOverflowClient,
-            BotClient botClient
+            UpdateNotificationService notificationService
     ) {
         return new LinkUpdateServiceImpl(
                 linkRepository,
@@ -74,7 +76,9 @@ public class JdbcAccessConfiguration {
                 linkParser,
                 gitHubClient,
                 stackOverflowClient,
-                botClient);
+                notificationService
+        );
+
     }
 
     @Bean
@@ -84,7 +88,8 @@ public class JdbcAccessConfiguration {
     ) {
         return new SubscriptionServiceImpl(
                 linkRepository,
-                subscriptionRepository);
+                subscriptionRepository
+        );
     }
 
     @Bean
@@ -94,6 +99,7 @@ public class JdbcAccessConfiguration {
     ) {
         return new TgChatServiceImpl(
                 userRepository,
-                subscriptionRepository);
+                subscriptionRepository
+        );
     }
 }

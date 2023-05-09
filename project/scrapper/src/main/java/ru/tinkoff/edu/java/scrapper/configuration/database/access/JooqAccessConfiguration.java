@@ -1,13 +1,10 @@
 package ru.tinkoff.edu.java.scrapper.configuration.database.acess;
 
-
 import org.jooq.DSLContext;
-import org.jooq.impl.DSL;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import parser.LinkParser;
-import ru.tinkoff.edu.java.scrapper.client.BotClient;
 import ru.tinkoff.edu.java.scrapper.client.GitHubClient;
 import ru.tinkoff.edu.java.scrapper.client.StackOverflowClient;
 import ru.tinkoff.edu.java.scrapper.repository.jdbcAndJooqContract.LinkRepository;
@@ -24,25 +21,22 @@ import ru.tinkoff.edu.java.scrapper.service.jdbcAndJooq.impl.LinkUpdateServiceIm
 import ru.tinkoff.edu.java.scrapper.service.jdbcAndJooq.impl.SubscriptionServiceImpl;
 import ru.tinkoff.edu.java.scrapper.service.jdbcAndJooq.impl.TgChatServiceImpl;
 
-
 @Configuration
 @ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jooq")
 public class JooqAccessConfiguration {
 
-
     @Bean
-    public LinkRepository linkRepository(DSLContext dslContext){
+    public LinkRepository linkRepository(DSLContext dslContext) {
         return new LinkJooqRepository(dslContext);
     }
 
     @Bean
-    public SubscriptionRepository subscriptionRepository(DSLContext dslContext){
+    public SubscriptionRepository subscriptionRepository(DSLContext dslContext) {
         return new SubscriptionJooqRepository(dslContext);
     }
 
-
     @Bean
-    public UserRepository userRepository(DSLContext dslContext){
+    public UserRepository userRepository(DSLContext dslContext) {
         return new UserJooqRepository(dslContext);
     }
 
@@ -61,7 +55,8 @@ public class JooqAccessConfiguration {
                 linkParser,
                 gitHubClient,
                 stackOverflowClient,
-                notificationService);
+                notificationService
+        );
 
     }
 
@@ -72,7 +67,8 @@ public class JooqAccessConfiguration {
     ) {
         return new SubscriptionServiceImpl(
                 linkRepository,
-                subscriptionRepository);
+                subscriptionRepository
+        );
     }
 
     @Bean
@@ -82,7 +78,8 @@ public class JooqAccessConfiguration {
     ) {
         return new TgChatServiceImpl(
                 userRepository,
-                subscriptionRepository);
+                subscriptionRepository
+        );
     }
 
 }

@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.tinkoff.edu.java.bot.telegram.commands.TrackCommand;
-import ru.tinkoff.edu.java.bot.telegram.processor.Processor;
-import ru.tinkoff.edu.java.bot.telegram.processor.UserMessageProcessor;
+import ru.tinkoff.edu.java.bot.commands.TrackCommand;
+import ru.tinkoff.edu.java.bot.telegram.Processor;
+import ru.tinkoff.edu.java.bot.telegram.UserMessageProcessor;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;

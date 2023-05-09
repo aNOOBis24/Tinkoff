@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.tinkoff.edu.java.bot.dto.ListLinkResponse;
 import ru.tinkoff.edu.java.bot.model.Link;
-import ru.tinkoff.edu.java.bot.telegram.commands.ListCommand;
+import ru.tinkoff.edu.java.bot.commands.ListCommand;
 
 
 import java.util.List;
