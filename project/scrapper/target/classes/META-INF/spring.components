@@ -1,0 +1,10 @@
+ru.tinkoff.edu.java.scrapper.ScrapperApplication=org.springframework.stereotype.Component,org.springframework.boot.SpringBootConfiguration
+ru.tinkoff.edu.java.scrapper.advice.AppExceptionHandler=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.scrapper.configuration.ApplicationConfig=org.springframework.boot.context.properties.ConfigurationProperties
+ru.tinkoff.edu.java.scrapper.configuration.ClientConfiguration=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.scrapper.repository.ChatRepository=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.scrapper.rest.ChatRestController=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.scrapper.rest.LinkRestController=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.scrapper.schedule.LinkUpdateScheduler=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.scrapper.service.ChatService=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.scrapper.service.LinkService=org.springframework.stereotype.Component

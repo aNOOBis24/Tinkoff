@@ -1,0 +1,17 @@
+ru.tinkoff.edu.java.bot.BotApplication=org.springframework.stereotype.Component,org.springframework.boot.SpringBootConfiguration
+ru.tinkoff.edu.java.bot.advice.AppExceptionHandler=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.configuration.ApplicationConfig=org.springframework.boot.context.properties.ConfigurationProperties
+ru.tinkoff.edu.java.bot.configuration.ClientConfiguration=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.controllers.ExceptionApiHandler=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.controllers.LinkController=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.repository.ChatRepository=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.rest.BotRestController=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.service.ChatService=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.service.LinkService=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.service.UpdateService=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.telegram.commands.HelpCommand=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.telegram.commands.ListCommand=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.telegram.commands.StartCommand=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.telegram.commands.TrackCommand=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.telegram.commands.TrackStopCommand=org.springframework.stereotype.Component
+ru.tinkoff.edu.java.bot.telegram.processor.Processor=org.springframework.stereotype.Component
